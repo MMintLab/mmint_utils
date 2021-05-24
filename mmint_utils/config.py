@@ -1,6 +1,7 @@
 import yaml
 import numpy as np
 
+
 def load_cfg(cfg_file):
     '''
     Load configuration file for project.
@@ -8,12 +9,14 @@ def load_cfg(cfg_file):
     cfg = yaml.load(open(cfg_file), Loader=yaml.SafeLoader)
     return cfg
 
+
 def dump_cfg(filename, cfg):
     '''
     Dump configuration file for project to file.
     '''
     with open(filename, 'w') as f:
         yaml.dump(cfg, f)
+
 
 def combine_cfg(cfg_1, cfg_2):
     '''
