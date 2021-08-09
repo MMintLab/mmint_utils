@@ -1,11 +1,21 @@
 import yaml
 
 
-def load_cfg(cfg_file):
+def load_cfg(cfg_file, default_path=None):
     """
     Load configuration file for project.
+
+    If default_path is provided, resulting config will inherit
+    configs from default_path. Configs in cfg_file overwrite
+    defaults.
     """
-    cfg = yaml.load(open(cfg_file), Loader=yaml.SafeLoader)
+    with open(cfg_file) as f:
+        cfg = yaml.load(f, Loader=yaml.SafeLoader)
+
+    if default_path is not None:
+        default_cfg = load_cfg(default_path)
+        cfg = combine_cfg(default_cfg, cfg)
+
     return cfg
 
 
