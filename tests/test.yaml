@@ -1,0 +1,5 @@
+int: 4
+bool: true
+list: [1, 2, 3, 4]
+dict:
+  abc: d
