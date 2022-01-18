@@ -27,7 +27,7 @@ def dump_cfg(filename, cfg):
         yaml.dump(cfg, f)
 
 
-def combine_cfg(cfg_1, cfg_2):
+def combine_cfg(cfg_1: dict, cfg_2: dict):
     """
     Combine config dicts to single config dict.
     """
