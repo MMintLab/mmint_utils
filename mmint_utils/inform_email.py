@@ -9,12 +9,12 @@ from pprint import pprint
 
 def send_email_with_error_info():
     configuration = sib_api_v3_sdk.Configuration()
-    configuration.api_key['api-key'] = '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'      ## Xili's debugging only email API, you can use it if you want
+    configuration.api_key['api-key'] = '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'      ## Xili's debugging only email API-key, you can use it if you want
 
     api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
     subject = "Error warning"
     html_content = "<html><body><h1>ERROR HAPPENED</h1></body></html>"
-    sender = {"name":"Medusa MMint","email":"eclymktest@gmail.com"}                         ## Xili's debugging only email API, you can use it if you want
+    sender = {"name":"Medusa MMint","email":"eclymktest@gmail.com"}                         ## Xili's debugging only email address, you can use it if you want
     to = [{"email":"eclymk@gmail.com","name":"Xili"}]
 
     headers = {"Some-Custom-Name":"unique-id-1234"}
