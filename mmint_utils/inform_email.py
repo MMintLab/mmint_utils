@@ -3,7 +3,9 @@ import time
 import sib_api_v3_sdk
 from sib_api_v3_sdk.rest import ApiException
 from pprint import pprint
-# Instantiate the client\
+
+
+## This function will send email to target email address, which is convenient if you want to get notified when bug happens or robot stops.
 
 def send_email_with_error_info():
     configuration = sib_api_v3_sdk.Configuration()
