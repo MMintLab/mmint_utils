@@ -56,3 +56,30 @@ def poses_equal_batch(poses_a: np.ndarray, poses_b: np.ndarray, rtol: float = 1e
         poses_equal_ = poses_equal_ and poses_equal(poses_a[pose_idx], poses_b[pose_idx], rtol, atol)
 
     return poses_equal_
+
+
+def dict_equal(dict_a: dict, dict_b: dict):
+    """
+    Determine equality of two dictionaries. Handles numpy array equality and recurses to handle dicts.
+
+    Args:
+        dict_a (dict)
+        dict_b (dict)
+    Returns:
+        equal (bool): whether the two provided dictionaries contain equal data.
+    """
+    for k in dict_a:
+        if k not in dict_b or type(dict_a[k]) != type(dict_b[k]):
+            return False
+
+        if type(dict_a[k]) is np.ndarray:
+            if not (dict_a[k] == dict_b[k]).all():
+                return False
+        elif type(dict_a[k]) is dict:
+            if not dict_equal(dict_a[k], dict_b[k]):
+                return False
+        else:
+            if not (dict_a[k] == dict_b[k]):
+                return False
+
+    return True
