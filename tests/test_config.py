@@ -40,7 +40,7 @@ class TestConfigMethods(unittest.TestCase):
             "test_1": 1,
             "test_2": 2,
         }
-        cfg = mmint_utils.combine_cfg(cfg_1, cfg_2)
+        cfg = mmint_utils.combine_dict(cfg_1, cfg_2)
         self.assertDictEqual(cfg, gt_cfg)
 
     def test_combine_config_overwrite(self):
@@ -57,7 +57,7 @@ class TestConfigMethods(unittest.TestCase):
             "test_2": 2,
             "abc": "test",
         }
-        cfg = mmint_utils.combine_cfg(cfg_1, cfg_2)
+        cfg = mmint_utils.combine_dict(cfg_1, cfg_2)
         self.assertDictEqual(cfg, gt_cfg)
 
     def test_default_file_load(self):

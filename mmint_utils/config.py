@@ -14,7 +14,7 @@ def load_cfg(cfg_file, default_path=None):
 
     if default_path is not None:
         default_cfg = load_cfg(default_path)
-        cfg = combine_cfg(default_cfg, cfg)
+        cfg = combine_dict(default_cfg, cfg)
 
     return cfg
 
@@ -27,15 +27,15 @@ def dump_cfg(filename, cfg):
         yaml.dump(cfg, f)
 
 
-def combine_cfg(cfg_1: dict, cfg_2: dict):
+def combine_dict(dict_1: dict, dict_2: dict):
     """
     Combine config dicts to single config dict.
     """
-    for k, v in cfg_2.items():
-        if k not in cfg_1:
-            cfg_1[k] = dict()
+    for k, v in dict_2.items():
+        if k not in dict_1:
+            dict_1[k] = dict()
         if isinstance(v, dict):
-            combine_cfg(cfg_1[k], v)
+            combine_dict(dict_1[k], v)
         else:
-            cfg_1[k] = v
-    return cfg_1
+            dict_1[k] = v
+    return dict_1
