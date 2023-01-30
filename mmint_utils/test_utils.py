@@ -1,5 +1,6 @@
 import arc_utilities.transformation_helper as tf_helper
 import numpy as np
+import torch
 
 
 # This file meant to have helpers for writing unit tests.
@@ -59,7 +60,7 @@ def poses_equal_batch(poses_a: np.ndarray, poses_b: np.ndarray, rtol: float = 1e
 
 
 def item_equal(item_a, item_b):
-    if type(item_a) is np.ndarray:
+    if type(item_a) is np.ndarray or type(item_a) is torch.Tensor:
         if not (item_a == item_b).all():
             return False
     elif type(item_a) is dict:
