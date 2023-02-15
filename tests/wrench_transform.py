@@ -17,6 +17,7 @@ class WrenchTransform(object):
 
         self.wrench_sub = rospy.Subscriber(self.wrench_topic, WrenchStamped, callback=self.wrench_callback)
         self.transformed_wrench = None
+        self.wrench = None
         self.wrench_time = None
         self.wrench_transformed = None
         self.wrench_transformed_time = None
@@ -90,9 +91,15 @@ class WrenchTransform(object):
 
         return wrench_in_frame
     
-    def get_wrench(self):
+    def get_transformed_wrench(self):
+        # return data type is Wrench
         if self.wrench_transformed is not None:
-            return self.wrench_transformed
+            return self.wrench_transformed.wrench
+        
+    def get_raw_wrench(self):
+        # return data type is Wrench
+        if self.wrench is not None:
+            return self.wrench
     
 if __name__ == '__main__':
     rospy.init_node('wrench_transform')
