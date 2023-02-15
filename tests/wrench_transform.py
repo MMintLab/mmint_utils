@@ -16,7 +16,7 @@ class WrenchTransform(object):
         self.base_frame = base_frame    # the frame that the wrench is transformed to
 
         self.wrench_sub = rospy.Subscriber(self.wrench_topic, WrenchStamped, callback=self.wrench_callback)
-        self.wrench = None
+        self.transformed_wrench = None
         self.wrench_time = None
         self.wrench_transformed = None
         self.wrench_transformed_time = None
@@ -89,6 +89,10 @@ class WrenchTransform(object):
         wrench_in_frame.torque.z = wrench_vector_frame[2]
 
         return wrench_in_frame
+    
+    def get_wrench(self):
+        if self.wrench_transformed is not None:
+            return self.wrench_transformed
     
 if __name__ == '__main__':
     rospy.init_node('wrench_transform')
