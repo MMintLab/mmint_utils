@@ -25,7 +25,7 @@ class WrenchTransform(object):
         self.wrench_transformed_time = None
         self.tf_listener = TransformListener()
         self.wrench_lock = True         # lock publisher if true until wrench is received, and we have both frames
-        self.flip = flip              # flip the wrench if true
+        self.flip = flip                # flip the wrench if true
 
         self.wrench_pub = rospy.Publisher(self.pub_wrench_topic, WrenchStamped, queue_size=1)
 
@@ -43,12 +43,14 @@ class WrenchTransform(object):
 
     def transform_wrench(self, wrench, wrench_frame, base_frame):
         # get the transform from wrench_frame to base_frame
-        if self.wrench_lock:
-            # if self.tf_listener.frameExists(wrench_frame) and self.tf_listener.frameExists(base_frame):
-            #     self.wrench_lock = False
-            # else:
-            #     return
-            self.wrench_lock = False
+        # if self.wrench_lock:
+        #     if self.tf_listener.frameExists(wrench_frame) and self.tf_listener.frameExists(base_frame):
+        #         self.wrench_lock = False
+        #     # else:
+        #     #     return
+        #     # self.wrench_lock = False
+        #     return None
+        self.tf_listener.waitForTransform(wrench_frame, base_frame, rospy.Time(), rospy.Duration(1.0))
         t = self.tf_listener.getLatestCommonTime(wrench_frame, base_frame)
         frame_transform = self.tf_listener.lookupTransform(wrench_frame, base_frame, t)
         wrench_to_transform = copy.deepcopy(wrench)
