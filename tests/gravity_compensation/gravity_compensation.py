@@ -65,8 +65,7 @@ if __name__ == '__main__':
     # get the current com frame in gamma's frame
     rospy.spin()
 
-    # transformation from gamma's center to com is center
-    # gravity direction in gamma's frame is 
+
     
         
         

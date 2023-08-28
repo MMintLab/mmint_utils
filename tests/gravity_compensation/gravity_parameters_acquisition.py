@@ -65,7 +65,7 @@ def wrench_to_mass_center(wrench):
     return mass, center_x, center_y
     
 
-def store_gravity_params(equivalent_wrench, mass, center, dir_conf=f'config/gravity_params.yaml'):
+def store_gravity_params(equivalent_wrench, mass, center, dir_conf='config/gravity_params.yaml'):
     '''
         store the calculated parameters to config file
     '''
