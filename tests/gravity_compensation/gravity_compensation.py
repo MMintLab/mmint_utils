@@ -40,23 +40,15 @@ if __name__ == '__main__':
         tf_listener.waitForTransform(world_frame_name, gamma_frame_name, rospy.Time(), rospy.Duration(1.0))
         t = tf_listener.getLatestCommonTime(world_frame_name, gamma_frame_name)
         world_to_gamma_frame_transform = tf_listener.lookupTransform(gamma_frame_name, world_frame_name, t)
-        # print('transform:', world_to_gamma_frame_transform)
         world_to_gamma_quaternion = np.array(world_to_gamma_frame_transform[1])
         world_to_gamma_rotation_matrix = tr.quaternion_matrix(world_to_gamma_quaternion)
-        # print('transform:', world_to_gamma_rotation_matrix)
         force_in_gamma_frame = world_to_gamma_rotation_matrix[0:3,0:3] @ gravity_vector
         torque_in_gamma_frame = np.cross(center_in_gamma_frame , force_in_gamma_frame)
-        # only for debugging: 
-        # print('force:', force_in_gamma_frame)
-        # print('torque:', torque_in_gamma_frame)
         
         new_wrenchstamped = copy.deepcopy(data)
         new_wrenchstamped.wrench.force.x = data.wrench.force.x + equivalent_wrench[0] - force_in_gamma_frame[0]
         new_wrenchstamped.wrench.force.y = data.wrench.force.y + equivalent_wrench[1] - force_in_gamma_frame[1]
         new_wrenchstamped.wrench.force.z = data.wrench.force.z + equivalent_wrench[2] - force_in_gamma_frame[2]
-        # print('data.wrench.force.y: ', data.wrench.force.y)
-        # print('equivalent_wrench[1]: ', equivalent_wrench[1])
-        # print('force_in_gamma_frame[1]: ', force_in_gamma_frame[1])
         new_wrenchstamped.wrench.torque.x = data.wrench.torque.x + equivalent_wrench[3] - torque_in_gamma_frame[0]
         new_wrenchstamped.wrench.torque.y = data.wrench.torque.y + equivalent_wrench[4] - torque_in_gamma_frame[1]
         new_wrenchstamped.wrench.torque.z = data.wrench.torque.z + equivalent_wrench[5] - torque_in_gamma_frame[2]

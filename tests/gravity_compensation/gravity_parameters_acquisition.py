@@ -52,7 +52,7 @@ def process_gravity_parameters(wrench_up, wrench_left, wrench_right):
     center_z_left = wrench_left[4] / wrench_left[2]
     center_z_right = wrench_right[3] / wrench_right[2]
     center_z = (center_z_left + center_z_right) / 2
-    center = [center_x, center_y, center_z]
+    center = np.array([center_x, center_y, center_z])
     # import pdb; pdb.set_trace()
     return equivalent_wrench.tolist(), float(mass), center.tolist()
                             
@@ -68,6 +68,9 @@ def wrench_to_mass_center(wrench):
 def store_gravity_params(equivalent_wrench, mass, center, dir_conf='config/gravity_params.yaml'):
     '''
         store the calculated parameters to config file
+        equivalent_wrench: the wrench to 'de-zero' gamma sensor
+        mass: mass of the whole EE below gamma sensor
+        center: center of mass of EE below gamma sensor, in gamma frame.
     '''
     gravity_cfg = {
             "equivanlent_wrench": equivalent_wrench,
@@ -113,13 +116,9 @@ if __name__ == '__main__':
     right_wrench_data = wrench_record_filter(filter_length=10)
     
     equivalent_wrench, mass, center = process_gravity_parameters(up_wrench_data, left_wrench_data, right_wrench_data)    
-    # first to list:
-    ## store the gravity parameters
-    
-    # equivalent_wrench = [0,0,0,0,0,0]
-    # mass = 2
-    # center = [1,1,1]
+
     store_gravity_params(equivalent_wrench, mass, center)
+
     
     
     
