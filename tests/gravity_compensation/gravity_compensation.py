@@ -4,6 +4,7 @@
 import rospy
 import numpy as np
 import argparse
+import os
 
 from geometry_msgs.msg import WrenchStamped, PoseStamped
 from mmint_utils.config import dump_cfg, load_cfg
@@ -12,12 +13,14 @@ import tf.transformations as tr
 import copy
 
 if __name__ == '__main__':
-    # parser = argparse.ArgumentParser('Gamma_on_hand_compensation')
-    # parser.add_argument('--gamma_on_hand', default=True, action='store_true')
-    # args = parser.parse_args()
+    parser = argparse.ArgumentParser('Gamma_on_hand_compensation')
+    parser.add_argument('--params_file_name', default='gravity_params', help='name of the configuration file for gravity compensation')
+    args = parser.parse_args()
     # if args.gamma_on_hand:
+
+    project_path = os.path.join(os.path.dirname(os.path.abspath(__file__)).split('/mmint_utils')[0], 'mmint_utils')
     rospy.init_node("netft_compensated")
-    gravity_cfg = load_cfg('config/gravity_params.yaml')
+    gravity_cfg = load_cfg(os.path.join(project_path, 'tests', 'gravity_compensation', f'config/{args.params_file_name}.yaml'))
     equivalent_wrench = gravity_cfg['equivanlent_wrench']
     mass = gravity_cfg['mass']
     center = gravity_cfg['center']

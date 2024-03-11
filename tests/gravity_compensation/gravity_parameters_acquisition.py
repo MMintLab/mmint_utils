@@ -20,7 +20,7 @@ fixed_orientation_quat_horizontal_left = tr.quaternion_from_euler(np.pi*0.5, np.
 fixed_orientation_quat_horizontal_right = tr.quaternion_from_euler(np.pi*0.5, np.pi*0.5, np.pi*0.5, axes='sxyz')  # this is the horizontal right orientation
 
 fixed_position_down = np.array([0.6, 0, 0.4])
-fixed_position_up = np.array([0.6, 0, 1.2])
+fixed_position_up = np.array([0.6, 0, .85])
 fixed_position_horizontal = np.array([0.8, 0, 0.8])
 
 gravity_acc = 9.81
@@ -65,7 +65,7 @@ def wrench_to_mass_center(wrench):
     return mass, center_x, center_y
     
 
-def store_gravity_params(equivalent_wrench, mass, center, dir_conf='config/gravity_params.yaml'):
+def store_gravity_params(equivalent_wrench, mass, center, dir_conf='/home/mik/InstalledProjects/mmint_utils/tests/gravity_compensation/config/gravity_params.yaml'):
     '''
         store the calculated parameters to config file
         equivalent_wrench: the wrench to 'de-zero' gamma sensor
@@ -82,6 +82,13 @@ def store_gravity_params(equivalent_wrench, mass, center, dir_conf='config/gravi
     
 
 if __name__ == '__main__':
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--num_filter_samples', type=int, default=10, help='number of samples to average to take a wrench measurement')
+    parser.add_argument('--params_file_name', default='gravity_params',
+                        help='name of the configuration file for gravity compensation')
+    args = parser.parse_args()
     '''
     This script is to set the gamma sensor to different posese to acquire the gravity parameters
     1. set the gamma sensor to vertical, down pose, and zero the gamma sensor
@@ -95,28 +102,39 @@ if __name__ == '__main__':
     med = BubbleMed()
     # netft_sub = rospy.Subscriber('/netft/netft_data', WrenchStamped, wrench_record_callback)
     # set the gamma sensor to vertical, down pose, and zero the gamma sensor
-    med.set_raw_pose(np.concatenate([fixed_position_down, fixed_orientation_quat_down]), blocking=True)
+    # fixed_init_position_down = [-2.2530346230916553e-05, 0.2607977063622664, 3.7750380889854847e-06, -1.5136653096358998, 0.00012645748188739873, 1.3666709415022578, -0.00015130084752613645]
+    fixed_joints_down = [0, 0.2607907554794372, 0., -1.5136623135600726, 0, 1.36671618185455, 0.]
+    fixed_joints_up = [0, 0.2607907554794372, 0., -1.5136623135600726, 0, -1.774434014080152, 0.] # only move joint 6
+    fixed_joints_horizontal = [0, 0.2607907554794372, 0., -1.5136623135600726, 0, -0.20343221774456588, 0.]
+    fixed_joints_horizontal_right = [0, 0.2607907554794372, 0., -1.5136623135600726, 0, -0.20343221774456588, 1.570434523]
+
+    # initial confituration
+    # med.set_raw_pose(np.concatenate([fixed_position_down, fixed_orientation_quat_down]), blocking=True)
+    med.plan_to_joint_config(med.arm_group, joint_config=fixed_joints_down)
     rospy.sleep(2)
     zero_ati_gamma()
     rospy.sleep(2)
     
     # set the gamma sensor to vertical, up pose, and get the measurement, as 2*mg
-    med.set_raw_pose(np.concatenate([fixed_position_up, fixed_orientation_quat_up]), blocking=True)
+    # med.set_raw_pose(np.concatenate([fixed_position_up, fixed_orientation_quat_up]), blocking=True) # This uses
+    med.plan_to_joint_config(med.arm_group, joint_config=fixed_joints_up)
     rospy.sleep(2)
-    up_wrench_data = wrench_record_filter(filter_length=10)
+    up_wrench_data = wrench_record_filter(filter_length=args.num_filter_samples)
     
     # set the gamma sensor to horizontal, left pose, both to validate mg, and also using the torque to get the center of mass in one direction
-    med.set_raw_pose(np.concatenate([fixed_position_horizontal, fixed_orientation_quat_horizontal_left]), blocking=True)
+    # med.set_raw_pose(np.concatenate([fixed_position_horizontal, fixed_orientation_quat_horizontal_left]), blocking=True)
+    med.plan_to_joint_config(med.arm_group, joint_config=fixed_joints_horizontal)
     rospy.sleep(2)
-    left_wrench_data = wrench_record_filter(filter_length=10)
+    left_wrench_data = wrench_record_filter(filter_length=args.num_filter_samples)
     
     # # set the gamma sensor to horizontal, right pose, both to validate mg, and also using the torque to get the center of mass in another direction
-    med.set_raw_pose(np.concatenate([fixed_position_horizontal, fixed_orientation_quat_horizontal_right]), blocking=True)
+    # med.set_raw_pose(np.concatenate([fixed_position_horizontal, fixed_orientation_quat_horizontal_right]), blocking=True)
+    med.plan_to_joint_config(med.arm_group, joint_config=fixed_joints_horizontal_right)
     rospy.sleep(2)
-    right_wrench_data = wrench_record_filter(filter_length=10)
+    right_wrench_data = wrench_record_filter(filter_length=args.num_filter_samples)
     
     equivalent_wrench, mass, center = process_gravity_parameters(up_wrench_data, left_wrench_data, right_wrench_data)    
-
+    # import pdb; pdb.set_trace()
     store_gravity_params(equivalent_wrench, mass, center)
 
     
