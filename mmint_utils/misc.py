@@ -13,6 +13,14 @@ def save_gzip_pickle(data, filename):
         pickle.dump(data, f)
 
 
+def save_pickle(data, filename):
+    """
+    Save the given data using pickle.
+    """
+    with open(filename, "wb") as f:
+        pickle.dump(data, f)
+
+
 def load_gzip_pickle(filename):
     """
     Load from file using gzip/pickle.
