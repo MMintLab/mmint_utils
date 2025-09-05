@@ -2,6 +2,7 @@ import gzip
 import pickle
 import os
 
+from threading import Thread
 import numpy as np
 
 
@@ -11,6 +12,12 @@ def save_gzip_pickle(data, filename):
     """
     with gzip.open(filename, "w") as f:
         pickle.dump(data, f)
+
+
+def save_gzip_pickle_thread(data, filename):
+    t_ = Thread(target=save_gzip_pickle, args=(data, filename))
+    t_.start()
+    return t_
 
 
 def save_pickle(data, filename):
